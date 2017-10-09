@@ -689,6 +689,10 @@ var polyanno_top_bar_HTML = `
 
         </div>
 
+        <div id="polyanno-toplayer-slidecontainer">
+          <input type="range" min="1" max="2" value="1" class="slider" id="polyanno-toplayer-range" style="display: none;">
+        </div>
+
         <!-- <button class="btn btn-default atu-custom-keyboard-btn" type="button">
           <span class="glyphicon glyphicon-asterisk"></span>
           <span class="glyphicon glyphicon-th"></span><span class="glyphicon glyphicon-th"></span>
@@ -1821,6 +1825,12 @@ Polyanno.connectingEquals.status = false; //used to indicate if the user is curr
       parent_vector : checkForVectorTarget(parent_anno)
 }*/
 
+///*****
+//document.getElementById("polyanno-toplayer-range").oninput = function(){
+  ///update the largest text granularity visible
+  //value of 1 == smallest granularity
+//};
+
 var polyanno_linking_annos_to_vector_checks = function(layer) {
 
   var shape = layer.toGeoJSON();
@@ -1830,6 +1840,12 @@ var polyanno_linking_annos_to_vector_checks = function(layer) {
 
   if ((checkingOverlapping[0] == 2) && (checkingOverlapping[2].includes(Polyanno.connectingEquals.parent_vector))) {  ///inside the correct vector
     Polyanno.L.vectors.addLayer(layer);
+
+    $("#polyanno-toplayer-range").css("display", "inline-block"); /////****
+    var newLayNo = $("#polyanno-toplayer-range").attr("max") + 1;
+    $("#polyanno-toplayer-range").attr("max", newLayNo);
+    $("#polyanno-toplayer-range").attr("value", newLayNo);
+
     layer.bindPopup(Polyanno.HTML.popups.connectingEquals).openPopup();
   }
   else { 
@@ -4320,9 +4336,9 @@ Polyanno.L.vec_event.delete = function() {
 
 $('#polyanno-page-body').on("click", '.newAnnotation', function(event) {
 
-  //atu_the_input = $(this);
+  atu_the_input = $(this);
   //change the text input area that the IME conversions are using to this one
-  //atu_initialise_IMEs($(this));
+  atu_initialise_IMEs($(this));
 
 });
 
@@ -4331,13 +4347,13 @@ $("#polyanno-top-bar").on("click", ".polyanno-add-keyboard", function(event){
       "minimise": true,
       "initialise_min_bar": false
     };
-    //addKeyboard(dragon_opts, false);
+    /////return when fixed
+    //addKeyboard(dragon_opts, false); 
 });
 
 ////////custom keys
 
-var atu_blank_custom_keyboard_HTML = ``;
-/*`
+var atu_blank_custom_keyboard_HTML = `
   <div class="col-md-6">
     <div class="row">
       <span >Keyboard Name:</span>
@@ -4352,17 +4368,16 @@ var atu_blank_custom_keyboard_HTML = ``;
       </button>
     </div>
   </div>
-`;*/
+`;
 
-var atu_custom_keyboard_HTML = ``;
-/*`
+var atu_custom_keyboard_HTML = `
   <div class="row">
     <div id="newKeyboardForCloning" class="col-md-6 atu-cloning-keyboard">`
     + atu_main_HTML +`
     </div>`
     +atu_blank_custom_keyboard_HTML+`
   </div>
-`;*/
+`;
 
 var atu_custom_keyboard_handlebar_HTML = `
   
@@ -4401,7 +4416,7 @@ var createCustomKeyboard = function() {
       return (className.match (/(^|\s)col-\S+/g) || []).join(' ');
   }).addClass("col-md-12");
 
-  //if (!atu_has_setup_initialised) { atu_initialise_setup(); };
+  if (!atu_has_setup_initialised) { atu_initialise_setup(); };
 
   new_body_id = Math.random().toString().substring(2);
   $("#newKeyboardForCloning").find(".atu-mapPopupBody").attr("id", new_body_id);
@@ -4674,7 +4689,7 @@ var polyanno_setup = function(opts) {
   var polyanno_image_title_HTML = "<span class='glyphicon glyphicon-picture'></span>";//"<span>"+polyanno_image_title()+"</span>";
 
   //will this induce synchronicity problems?
-  //$("#polyanno-page-body").addClass("row atu-keyboard-parent");
+  $("#polyanno-page-body").addClass("row atu-keyboard-parent");
 
   //createCustomKeyboard();
 
@@ -4697,13 +4712,11 @@ var polyanno_setup = function(opts) {
 
   Polyanno.starting.voting();
 
-  /*
-  //Re add when working
+
   $(".atu-custom-keyboard-buttons").toggle();
   $(".atu-custom-keyboard-btn").on("click", function(event){
     $(".atu-custom-keyboard-buttons").toggle("swing");
   });
-  */
 
   window.hypothesisConfig = function () {
     return {
